@@ -1,6 +1,6 @@
 # How to run 
 Make sure to have the necessary dependencies installed for Zephyr
-[Getting Started][https://docs.zephyrproject.org/latest/develop/getting_started/index.html]
+[Getting Started](https://docs.zephyrproject.org/latest/develop/getting_started/index.html)
 
 -> to clone locally as a manifest - rename folders as necessary
 ```bash
