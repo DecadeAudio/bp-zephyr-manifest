@@ -1,4 +1,13 @@
 # Zephyr Example Application
+-> to clone locally as a manifest - rename folders as necessary
+```bash
+cd <workdir>
+mkdir my-workspace
+cd my-workspace
+gh repo clone DecadeAudio/bp-zephyr-manifest my-manifest-repo
+west init -l my-manifest-repo
+```
+
 
 <a href="https://github.com/zephyrproject-rtos/example-application/actions/workflows/build.yml?query=branch%3Amain">
   <img src="https://github.com/zephyrproject-rtos/example-application/actions/workflows/build.yml/badge.svg?event=push">
