@@ -1,10 +1,10 @@
 # Zephyr Example Application
--> to clone locally as a manifest
+-> to clone locally as a manifest - rename folders as necessary
 ```bash
-cd <home>
+cd <workdir>
 mkdir my-workspace
 cd my-workspace
-git clone https://github.com/zephyrproject-rtos/example-application my-manifest-repo
+gh repo clone DecadeAudio/bp-zephyr-manifest my-manifest
 west init -l my-manifest-repo
 ```
 
