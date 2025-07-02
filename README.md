@@ -1,5 +1,14 @@
 # Zephyr Example Application
 
+```bash
+cd <home>
+mkdir my-workspace
+cd my-workspace
+git clone https://github.com/zephyrproject-rtos/example-application my-manifest-repo
+west init -l my-manifest-repo
+```
+
+
 <a href="https://github.com/zephyrproject-rtos/example-application/actions/workflows/build.yml?query=branch%3Amain">
   <img src="https://github.com/zephyrproject-rtos/example-application/actions/workflows/build.yml/badge.svg?event=push">
 </a>
