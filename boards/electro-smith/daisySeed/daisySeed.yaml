@@ -1,0 +1,22 @@
+# Copyright (c) 2021 Nordic Semiconductor ASA
+# SPDX-License-Identifier: Apache-2.0
+
+identifier: daisy_seed
+name: Electro-Smith Daisy Seed
+type: mcu
+arch: arm
+toolchain:
+  - zephyr
+  - gnuarmemb
+ram: 1024
+flash: 128
+supported:
+  - arduino_gpio
+  - gpio
+  - dma
+  - flash
+  - rtc
+  - memc
+  - display
+  - spi
+vendor: st
