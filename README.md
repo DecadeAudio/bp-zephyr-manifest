@@ -1,4 +1,7 @@
-# Zephyr Example Application
+# How to run 
+Make sure to have the necessary dependencies installed for Zephyr
+[Getting Started][https://docs.zephyrproject.org/latest/develop/getting_started/index.html]
+
 -> to clone locally as a manifest - rename folders as necessary
 ```bash
 cd <workdir>
@@ -8,6 +11,8 @@ gh repo clone DecadeAudio/bp-zephyr-manifest my-manifest-repo
 west init -l my-manifest-repo
 ```
 
+
+# Zephyr Example Application
 
 <a href="https://github.com/zephyrproject-rtos/example-application/actions/workflows/build.yml?query=branch%3Amain">
   <img src="https://github.com/zephyrproject-rtos/example-application/actions/workflows/build.yml/badge.svg?event=push">
