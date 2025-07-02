@@ -1,5 +1,5 @@
 # Zephyr Example Application
-
+-> to clone locally as a manifest
 ```bash
 cd <home>
 mkdir my-workspace
