@@ -4,7 +4,7 @@
 cd <workdir>
 mkdir my-workspace
 cd my-workspace
-gh repo clone DecadeAudio/bp-zephyr-manifest my-manifest
+gh repo clone DecadeAudio/bp-zephyr-manifest my-manifest-repo
 west init -l my-manifest-repo
 ```
 
