@@ -10,15 +10,15 @@
 #include <zephyr/dt-bindings/input/input-event-codes.h>
 
 / {
-	model = "STMicroelectronics STM32H750B DISCOVERY KIT";
-	compatible = "st,stm32h750b-dk";
+	model = "Electro-Smith Daisy Seed";
+	compatible = "electro-smith,daisy_seed";
 
 	chosen {
 		zephyr,console = &usart3;
 		zephyr,shell-uart = &usart3;
 		zephyr,sram = &sram0;
 		zephyr,flash = &flash0;
-		zephyr,flash-controller = &mt25ql512ab1;
+		zephyr,flash-controller = &is25lp128;
 		zephyr,display = &ltdc;
 		zephyr,code-partition = &slot0_partition;
 	};
@@ -60,7 +60,6 @@
 	aliases {
 		led0 = &red_led;
 		sw0 = &user_button;
-		die-temp0 = &die_temp;
 	};
 };
 
@@ -85,47 +84,6 @@
 			reg = <0x00000000 DT_SIZE_K(128)>;
 		};
 	};
-};
-
-&ltdc {
-	pinctrl-0 = <&ltdc_r0_pi15 &ltdc_r1_pj0 &ltdc_r2_pj1 &ltdc_r3_ph9
-		&ltdc_r4_pj3 &ltdc_r5_pj4 &ltdc_r6_pj5 &ltdc_r7_pj6
-		&ltdc_g0_pj7 &ltdc_g1_pj8 &ltdc_g2_pj9 &ltdc_g3_pj10
-		&ltdc_g4_pj11 &ltdc_g5_pi0 &ltdc_g6_pi1 &ltdc_g7_pk2
-		&ltdc_b0_pj12 &ltdc_b1_pj13 &ltdc_b2_pj14 &ltdc_b3_pj15
-		&ltdc_b4_pk3 &ltdc_b5_pk4 &ltdc_b6_pk5 &ltdc_b7_pk6
-		&ltdc_de_pk7 &ltdc_clk_pi14 &ltdc_hsync_pi12 &ltdc_vsync_pi9>;
-	pinctrl-names = "default";
-
-	disp-on-gpios = <&gpiod 7 GPIO_ACTIVE_HIGH>;
-
-	ext-sdram = <&sdram2>;
-	status = "okay";
-
-	clocks = <&rcc STM32_CLOCK_BUS_APB3 0x00000008>,
-		<&rcc STM32_SRC_PLL3_R NO_SEL>;
-
-	width = <480>;
-	height = <272>;
-	pixel-format = <PANEL_PIXEL_FORMAT_RGB_565>;
-
-	display-timings {
-		compatible = "zephyr,panel-timing";
-		de-active = <1>;
-		pixelclk-active = <0>;
-		hsync-active = <0>;
-		vsync-active = <0>;
-		hsync-len = <1>;
-		vsync-len = <10>;
-		hback-porch = <43>;
-		vback-porch = <12>;
-		hfront-porch = <8>;
-		vfront-porch = <4>;
-	};
-
-	def-back-color-red = <0xFF>;
-	def-back-color-green = <0xFF>;
-	def-back-color-blue = <0xFF>;
 };
 
 &pll {
@@ -169,23 +127,22 @@
 
 &quadspi {
 	pinctrl-names = "default";
-	pinctrl-0 = <&quadspi_clk_pf10 &quadspi_bk1_ncs_pg6
-		     &quadspi_bk1_io0_pd11 &quadspi_bk1_io1_pf9
-		     &quadspi_bk1_io2_pf7 &quadspi_bk1_io3_pf6
-		     &quadspi_bk2_io0_ph2 &quadspi_bk2_io1_ph3
-		     &quadspi_bk2_io2_pg9 &quadspi_bk2_io3_pg14>;
-	dual-flash;
+	pinctrl-0 = <
+		&quadspi_clk_pf10      // SCK  - PF10
+		&quadspi_bk1_ncs_pg6   // NCS  - PG6
+		&quadspi_bk1_io0_pf8   // IO0  - PF8
+		&quadspi_bk1_io1_pf9   // IO1  - PF9
+		&quadspi_bk1_io2_pf7   // IO2  - PF7
+		&quadspi_bk1_io3_pf6   // IO3  - PF6
+	>;
 	status = "okay";
 
-	/* Sector erase 64KB uniform granularity */
-	/* Subsector erase 4KB, 32KB granularity */
-	mt25ql512ab1: qspi-nor-flash-1@0 {
-		compatible = "st,stm32-qspi-nor";
+	is25lp128: qspi-nor-flash@0 {
+		compatible = "jedec,spi-nor";
 		reg = <0>;
-		size = <DT_SIZE_M(512)>; /* 512 Mbits */
-		qspi-max-frequency = <72000000>;
+		size = <DT_SIZE_M(128)>; /* 128 Mbits = 16 MB */
+		spi-max-frequency = <72000000>;
 		spi-bus-width = <4>;
-		reset-cmd;
 		status = "okay";
 
 		partitions {
@@ -208,14 +165,6 @@
 				reg = <0x00400000 DT_SIZE_K(128)>;
 			};
 		};
-	};
-
-	mt25ql512ab2: qspi-nor-flash-2@0 {
-		compatible = "st,stm32-qspi-nor";
-		reg = <0>;
-		size = <DT_SIZE_M(512)>; /* 512 Mbits */
-		qspi-max-frequency = <72000000>;
-		status = "okay";
 	};
 };
 
@@ -259,10 +208,6 @@
 &rtc {
 	clocks = <&rcc STM32_CLOCK_BUS_APB4 0x00010000>,
 		 <&rcc STM32_SRC_LSE RTC_SEL(1)>;
-	status = "okay";
-};
-
-&die_temp {
 	status = "okay";
 };
 
