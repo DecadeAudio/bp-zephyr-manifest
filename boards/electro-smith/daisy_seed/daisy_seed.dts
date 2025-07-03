@@ -7,6 +7,7 @@
 /dts-v1/;
 #include <st/h7/stm32h750Xb.dtsi>
 #include <st/h7/stm32h750xbhx-pinctrl.dtsi>
+#include "daisy_seed-pinctrl.dtsi"
 #include <zephyr/dt-bindings/input/input-event-codes.h>
 
 / {
@@ -23,13 +24,14 @@
 		zephyr,code-partition = &slot0_partition;
 	};
 
-	sdram2: sdram@d0000000 {
-		compatible = "zephyr,memory-region", "mmio-sram";
-		device_type = "memory";
-		reg = <0xd0000000 DT_SIZE_M(16)>; /* 128Mbit */
-		zephyr,memory-region = "SDRAM2";
-		zephyr,memory-attr = <( DT_MEM_ARM(ATTR_MPU_RAM) )>;
-	};
+    sdram_ext: memory@d0000000 {
+        compatible = "zephyr,memory-region", "mmio-sram";
+        device_type = "memory";
+        reg = <0xD0000000 0x04000000>; /* 64MB (512Mbit, 16Mx32) */
+        zephyr,memory-region = "SDRAM_EXT";
+        zephyr,memory-attr = <( DT_MEM_ARM(ATTR_MPU_RAM) )>;
+        status = "okay";
+    };
 
 	ext_memory: memory@90000000 {
 		compatible = "zephyr,memory-region";
@@ -169,40 +171,64 @@
 };
 
 &fmc {
-	pinctrl-0 = <&fmc_nbl0_pe0 &fmc_nbl1_pe1
-		&fmc_sdclk_pg8 &fmc_sdnwe_ph5 &fmc_sdcke1_ph7
-		&fmc_sdne1_ph6 &fmc_sdnras_pf11 &fmc_sdncas_pg15
-		&fmc_a0_pf0 &fmc_a1_pf1 &fmc_a2_pf2 &fmc_a3_pf3 &fmc_a4_pf4
-		&fmc_a5_pf5 &fmc_a6_pf12 &fmc_a7_pf13 &fmc_a8_pf14
-		&fmc_a9_pf15 &fmc_a10_pg0 &fmc_a11_pg1
-		&fmc_a14_pg4 &fmc_a15_pg5 &fmc_d0_pd14 &fmc_d1_pd15
-		&fmc_d2_pd0 &fmc_d3_pd1 &fmc_d4_pe7 &fmc_d5_pe8 &fmc_d6_pe9
-		&fmc_d7_pe10 &fmc_d8_pe11 &fmc_d9_pe12 &fmc_d10_pe13
-		&fmc_d11_pe14 &fmc_d12_pe15 &fmc_d13_pd8 &fmc_d14_pd9
-		&fmc_d15_pd10>;
-	pinctrl-names = "default";
-	status = "okay";
+    pinctrl-0 = <
+        // Data pins D0-D15 (Port D/E)
+        &fmc_d0_pd14 &fmc_d1_pd15 &fmc_d2_pd0 &fmc_d3_pd1
+        &fmc_d4_pe7 &fmc_d5_pe8 &fmc_d6_pe9 &fmc_d7_pe10
+        &fmc_d8_pe11 &fmc_d9_pe12 &fmc_d10_pe13 &fmc_d11_pe14
+        &fmc_d12_pe15 &fmc_d13_pd8 &fmc_d14_pd9 &fmc_d15_pd10
 
-	sdram {
-		status = "okay";
-		power-up-delay = <100>;
-		num-auto-refresh = <8>;
-		mode-register = <0x230>;
-		refresh-rate = <0x603>;
+        // Data pins D16-D23 (Port H)
+        &fmc_d16_ph8 &fmc_d17_ph9 &fmc_d18_ph10 &fmc_d19_ph11
+        &fmc_d20_ph12 &fmc_d21_ph13 &fmc_d22_ph14 &fmc_d23_ph15
 
-		bank@1 {
-			reg = <1>;
-			st,sdram-control = <STM32_FMC_SDRAM_NC_8
-				STM32_FMC_SDRAM_NR_12
-				STM32_FMC_SDRAM_MWID_16
-				STM32_FMC_SDRAM_NB_4
-				STM32_FMC_SDRAM_CAS_3
-				STM32_FMC_SDRAM_SDCLK_PERIOD_2
-				STM32_FMC_SDRAM_RBURST_ENABLE
-				STM32_FMC_SDRAM_RPIPE_1>;
-			st,sdram-timing = <2 7 4 7 2 2 2>;
-		};
-	};
+        // Data pins D24-D31 (Port I)
+        &fmc_d24_pi0 &fmc_d25_pi1 &fmc_d26_pi2 &fmc_d27_pi3
+        &fmc_d28_pi6 &fmc_d29_pi7 &fmc_d30_pi9 &fmc_d31_pi10
+
+        // Byte lane signals
+        &fmc_nbl0_pe0 &fmc_nbl1_pe1 &fmc_nbl2_pi4 &fmc_nbl3_pi5
+
+        // Address pins A0-A9 (Port F)
+        &fmc_a0_pf0 &fmc_a1_pf1 &fmc_a2_pf2 &fmc_a3_pf3 &fmc_a4_pf4
+        &fmc_a5_pf5 &fmc_a6_pf12 &fmc_a7_pf13 &fmc_a8_pf14 &fmc_a9_pf15
+
+        // Address pins A10-A12 (Port G)
+        &fmc_a10_pg0 &fmc_a11_pg1 &fmc_a12_pg2
+
+        // Bank address pins (Port G)
+        &fmc_ba0_pg4 &fmc_ba1_pg5
+
+        // Control signals
+        &fmc_sdclk_pg8      // SDRAM clock
+        &fmc_sdcke0_ph2     // SDRAM clock enable
+        &fmc_sdne0_ph3      // SDRAM chip enable
+        &fmc_sdnwe_ph5      // SDRAM write enable
+        &fmc_sdnc_as_pg15   // SDRAM column address strobe
+        &fmc_sdnras_pf11    // SDRAM row address strobe
+    >;
+    pinctrl-names = "default";
+    status = "okay";
+
+	bank@1 {
+        reg = <0x00000000 0xD0000000 0x04000000>;
+        status = "okay";
+        power-up-delay = <200>;      /* µs */
+        num-auto-refresh = <8>;      /* typical for 64MB SDRAM */
+        mode-register = <0x0230>;    /* CAS=3, burst=1 (adjust as needed) */
+        refresh-rate = <0x2F3>;      /* ~64ms/8192 rows (adjust as needed) */
+
+        st,sdram-control = <
+            STM32_FMC_SDRAM_NC_9
+            STM32_FMC_SDRAM_NR_13
+            STM32_FMC_SDRAM_MWID_32
+            STM32_FMC_SDRAM_NB_4
+            STM32_FMC_SDRAM_CAS_3
+            STM32_FMC_SDRAM_SDCLK_PERIOD_2
+            STM32_FMC_SDRAM_RBURST_ENABLE
+            STM32_FMC_SDRAM_RPIPE_1>;
+        st,sdram-timing = <2 7 4 7 2 2 2>;
+    };
 };
 
 &rtc {
